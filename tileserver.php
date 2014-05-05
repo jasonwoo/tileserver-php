@@ -22,7 +22,7 @@ Router::serve(array(
     '/wmts/1.0.0/WMTSCapabilities.xml' => 'Wmts:get',
     '/wmts/:string/:number/:number/:number.:string' => 'Wmts:getTile',
     '/wmts/:string/:string/:number/:number/:number.:string' => 'Wmts:getTile',
-'/wmts/:number/:string/:number/:number/:number.:string' => 'Wmts:getTile',
+	'/wmts/:number/:string/:number/:number/:number.:string' => 'Wmts:getTile',
     '/wmts/:string/:string/:string/:number/:number/:number.:string' => 'Wmts:getTile',
     '/:string/:number/:number/:number.:string' => 'Wmts:getTile',
     '/tms' => 'Tms:getCapabilities',
