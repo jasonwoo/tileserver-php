@@ -8,7 +8,7 @@
  */
 
 global $config;
-$config['serverTitle'] = 'TileServer-php v1';
+$config['serverTitle'] = 'TileServer-php NOAA';
 //$config['baseUrls'] = ['t0.server.com', 't1.server.com'];
 
 Router::serve(array(
@@ -408,26 +408,64 @@ class Server {
     $maps = array_merge($this->fileLayer, $this->dbLayer);
     header('Content-Type: text/html;charset=UTF-8');
     echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' . $this->config['serverTitle'] . '</title>';
-    echo '<link rel="stylesheet" type="text/css" href="//tileserver.com/v1/index.css" />
-          <script src="//tileserver.com/v1/index.js"></script><body>
-          <script>tileserver({index:"http://' . $this->config['baseUrls'][0] . '/index.json", tilejson:"http://' . $this->config['baseUrls'][0] . '/%n.json", tms:"http://' . $this->config['baseUrls'][0] . '/tms", wmts:"http://' . $this->config['baseUrls'][0] . '/wmts"});</script>
-          <h1>Welcome to ' . $this->config['serverTitle'] . '</h1>
-          <p>This server distributes maps to desktop, web, and mobile applications.</p>
-          <p>The mapping data are available as OpenGIS Web Map Tiling Service (OGC WMTS), OSGEO Tile Map Service (TMS), and popular XYZ urls described with TileJSON metadata.</p>';
+	echo '<link rel="stylesheet" type="text/css" href="includes/bootstrap.min.css" />';
+	echo '<link rel="stylesheet" type="text/css" href="includes/font-awesome-4.0.3/css/font-awesome.min.css" />';
+	echo '<script src="includes/jquery-1.10.2.js"></script>';
+	echo '<script src="includes/bootstrap.min.js"></script>';
+    echo '<body style="padding-top: 50px; height:100%;">
+		 <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+		  <div class="container">
+		        <div class="navbar-header">
+                	<h2><i class="fa fa-cogs fa-lg"></i> Welcome to ' . $this->config['serverTitle'] . '</h2>
+                </div>
+         </div>
+         </div>';
     if (!isset($maps)) {
-      echo '<h3 style="color:darkred;">No maps available yet</h3>
-            <p style="color:darkred; font-style: italic;">
-            Ready to go - just upload some maps into directory:' . getcwd() . '/ on this server.</p>
-            <p>Note: The maps can be a directory with tiles in XYZ format with metadata.json file.<br/>
-            You can easily convert existing geodata (GeoTIFF, ECW, MrSID, etc) to this tile structure with <a href="http://www.maptiler.com">MapTiler Cluster</a> or open-source projects such as <a href="http://www.klokan.cz/projects/gdal2tiles/">GDAL2Tiles</a> or <a href="http://www.maptiler.org/">MapTiler</a> or simply upload any maps in MBTiles format made by <a href="http://www.tilemill.com/">TileMill</a>. Helpful is also the <a href="https://github.com/mapbox/mbutil">mbutil</a> tool. Serving directly from .mbtiles files is supported, but with decreased performance.</p>';
+      echo '<div class="container" style="padding-top: 25px;">
+			<h4 style="color:darkred;">No maps available yet</h4>
+			</div>';
     } else {
+	  echo '<div class="container" style="padding-top: 25px; padding-bottom: 90px; height: 100%; position:relative;">
+		<p>This server distributes maps to desktop, web, and mobile applications. The mapping data are available as OpenGIS Web Map Tiling Service (OGC WMTS), OSGEO Tile Map Service (TMS), and popular XYZ urls described with TileJSON metadata.</p>';
+	  echo '<p><b>WMTS version 1.0.0 GetCapabilities:</b></p>';
+	  echo '<ul>';
+	  echo "<a href='http://". $this->config['baseUrls'][0] ."/wmts'>http://". $this->config['baseUrls'][0] ."/wmts</a>";
+	  echo '</ul>';
+	  echo '<p><b>TileJSON:</b></p>';
+	  echo '<ul>';
+	  echo "http://". $this->config['baseUrls'][0] ."/layername.jsonp";
+	  echo '</ul>';	
+	  echo '<p><b>Direct XYZ tile access compatible with Leaflet, OpenLayers, Google Maps and other mapping APIs:</b></p>';
+	  echo '<ul>';
+	  echo "http://". $this->config['baseUrls'][0] ."/layername/{z}/{x}/{y}.png";
+	  echo '</ul>';	  	
+	  echo '<h4>Available Layers:</h4>';
       echo '<ul>';
-      foreach ($maps as $map) {
-        echo "<li>" . $map['name'] . '</li>';
-      }
-      echo '</ul>';
+	  
+	  if (empty($maps)){
+		echo '<h4 style="color:darkred;">No layers available yet</h4>';
+	  } else {		
+		foreach ($maps as $map) {	
+	         echo '<li>' . $map['name'] . '</li>';
+	    }	
+	  }
+      echo '</ul></div>';
     }
-    echo '</body></html>';
+	echo '<div id="footer" style="height: 90px;">
+		    <nav class="navbar-footer navbar-default navbar-fixed-bottom hidden-xs" style="min-height: 15px;">
+		        <div class="navbar-inner navbar-content-center">
+					<p style="text-align: center;"><img src="includes/tileserver-klokantech-logo.png" alt="klokantech" width="207px" height="50px"></p> 
+					<p class="text-muted credit center" style="text-align: center;">
+				    <a href="http://www.nos.noaa.gov/" target="_blank"><small>NOS Home</small></a>&nbsp;<i class="fa fa-minus fa-rotate-90"></i>&nbsp; 
+				    <a href="https://www8.nos.noaa.gov/survey/index.aspx?Location=ngsstorms" target="_blank"><small>User Survey</small></a>&nbsp;<i class="fa fa-minus fa-rotate-90"></i>&nbsp; 
+				    <a href="http://www.ngs.noaa.gov/disclaimer.html" target="_blank"><small>Disclaimer</small></a>&nbsp;<i class="fa fa-minus fa-rotate-90"></i>&nbsp; 
+				    <a href="http://www.ngs.noaa.gov/privacy.shtml" target="_blank"><small>Privacy Policy</small></a>&nbsp;<i class="fa fa-minus fa-rotate-90"></i>&nbsp;
+				    <a href="http://www.usa.gov/" target="_blank"><small>USA.gov</small></a>&nbsp;<i class="fa fa-minus fa-rotate-90"></i>&nbsp;
+				    <a href="http://www.ngs.noaa.gov/cgi-bin/redirectNOAA.prl?u=ngs.webmaster" target="_blank"><small>Contact Us</small></a> 
+				    </p>			            
+		        </div>
+		    </nav>';
+	 echo '</div></body></html>';
   }
 
 }
